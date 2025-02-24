@@ -10,26 +10,7 @@ In its current implementation, it reads 23 (or 25 if padding is used) character 
 go build server.go
 ```
 
-Alternatively, you can set the **OS** and **ARCH** when compiling the code. With GO version 1.21.0, the following OS and ARCH combinations are allowed as seen in `go tool dist list`:
-
-| OS \ ARCH | 386 | amd64 | arm | arm64 | loong64 | mips | mips64 | mips64le | mipsle | ppc64 | ppc64le | riscv64 | s390x | WASM |
-| --------- | --- | ----- | --- | ----- | ------- | ---- | ------ | -------- | ------ | ----- | ------- | ------- | ----- | ---- |
-| aix       |     |       |     |       |         |      |        |          |        | X     |         |         |       |      |
-| android   | X   | X     | X   | X     |         |      |        |          |        |       |         |         |       |      |
-| darwin    |     | X     |     | X     |         |      |        |          |        |       |         |         |       |      |
-| dragonfly |     | X     |     |       |         |      |        |          |        |       |         |         |       |      |
-| freebsd   | X   | X     | X   | X     |         |      |        |          |        |       |         | X       |       |      |
-| illumos   |     | X     |     |       |         |      |        |          |        |       |         |         |       |      |
-| ios       |     | X     |     | X     |         |      |        |          |        |       |         |         |       |      |
-| js        |     |       |     |       |         |      |        |          |        |       |         |         |       | X    |
-| linux     | X   | X     | X   | X     | X       | X    | X      | X        | X      | X     | X       | X       | X     |      |
-| netbsd    | X   | X     | X   | X     |         |      |        |          |        |       |         |         |       |      |
-| openbsd   | X   | X     | X   | X     |         |      |        |          |        |       |         |         |       |      |
-| plan9     | X   | X     | X   |       |         |      |        |          |        |       |         |         |       |      |
-| solaris   |     | X     |     |       |         |      |        |          |        |       |         |         |       |      |
-| wasip1    |     |       |     |       |         |      |        |          |        |       |         |         |       | X    |
-| windows   | X   | X     | X   | X     |         |      |        |          |        |       |         |         |       |      |
-
+Alternatively, you can set the **OS** and **ARCH** when compiling the code. 
 - Build for Raspberry PI (ARM) Running 32 bit Linux
 
   ```bash
@@ -71,3 +52,25 @@ Usage of ./server:
 ```bash
 tail -F bearings | ./server -bearings=30 -refresh=1
 ```
+
+## Complete list of OS and ARCH
+
+With GO version 1.21.0, the following OS and ARCH combinations are allowed as seen in `go tool dist list`:
+
+| OS \ ARCH | 386 | amd64 | arm | arm64 | loong64 | mips | mips64 | mips64le | mipsle | ppc64 | ppc64le | riscv64 | s390x | WASM |
+| --------- | --- | ----- | --- | ----- | ------- | ---- | ------ | -------- | ------ | ----- | ------- | ------- | ----- | ---- |
+| aix       |     |       |     |       |         |      |        |          |        | X     |         |         |       |      |
+| android   | X   | X     | X   | X     |         |      |        |          |        |       |         |         |       |      |
+| darwin    |     | X     |     | X     |         |      |        |          |        |       |         |         |       |      |
+| dragonfly |     | X     |     |       |         |      |        |          |        |       |         |         |       |      |
+| freebsd   | X   | X     | X   | X     |         |      |        |          |        |       |         | X       |       |      |
+| illumos   |     | X     |     |       |         |      |        |          |        |       |         |         |       |      |
+| ios       |     | X     |     | X     |         |      |        |          |        |       |         |         |       |      |
+| js        |     |       |     |       |         |      |        |          |        |       |         |         |       | X    |
+| linux     | X   | X     | X   | X     | X       | X    | X      | X        | X      | X     | X       | X       | X     |      |
+| netbsd    | X   | X     | X   | X     |         |      |        |          |        |       |         |         |       |      |
+| openbsd   | X   | X     | X   | X     |         |      |        |          |        |       |         |         |       |      |
+| plan9     | X   | X     | X   |       |         |      |        |          |        |       |         |         |       |      |
+| solaris   |     | X     |     |       |         |      |        |          |        |       |         |         |       |      |
+| wasip1    |     |       |     |       |         |      |        |          |        |       |         |         |       | X    |
+| windows   | X   | X     | X   | X     |         |      |        |          |        |       |         |         |       |      |
