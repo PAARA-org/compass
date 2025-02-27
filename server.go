@@ -78,12 +78,12 @@ func readInput() {
 
 		mu.Lock()
 		if len(bearings) >= maxBearings {
-			bearings = bearings[1:]
+			bearings = bearings[:maxBearings-1]
 		}
-		bearings = append(bearings, Bearing{
+		bearings = append([]Bearing{{
 			Degree: degree / 10.0,
 			Time:   time.UnixMilli(timestamp).Format("15:04:05.000"),
-		})
+		}}, bearings...)
 		mu.Unlock()
 	}
 }
@@ -154,8 +154,8 @@ func serveCompass(w http.ResponseWriter, r *http.Request) {
 
 		for i, b := range bearings {
 			rad := b.Degree * math.Pi / 180
-			// Calculate radius progression from center (newest) to edge (oldest)
-			radius := 190 * float64(len(bearings)-i-1) / float64(len(bearings)-1)
+			// Calculate radius progression
+			radius := 190 * float64(maxBearings-i-1) / float64(maxBearings-1)
 
 			data.Bearings[i] = struct {
 				Degree float64
@@ -174,10 +174,6 @@ func serveCompass(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		// Reverse the order of bearings for display in the table
-		for i, j := 0, len(data.Bearings)-1; i < j; i, j = i+1, j-1 {
-			data.Bearings[i], data.Bearings[j] = data.Bearings[j], data.Bearings[i]
-		}
 	}
 
 	t := template.Must(template.New("compass").Parse(tmpl))
