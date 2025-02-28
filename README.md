@@ -31,6 +31,8 @@ flag provided but not defined: -helpshort
 Usage of ./server:
   -bearings int
     	Max bearings to cache (default 20)
+  -expire int
+    	Bearing expire interval in milliseconds (default 2000)
   -paddedTimestamp
     	Pad timestamps to 15 digits
   -refresh int
@@ -50,7 +52,7 @@ Usage of ./server:
 ## Example run
 
 ```bash
-tail -F bearings | ./server -bearings=30 -refresh=1
+tail -F bearings | ./server -bearings=30 -refresh=1 -expire=1500
 ```
 
 ## Complete list of OS and ARCH
