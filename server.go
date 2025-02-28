@@ -23,11 +23,13 @@ import (
 )
 
 type Bearing struct {
-	Degree float64
-	Time   string
+	Degree    float64
+	Time      string
+	Timestamp time.Time
 }
 
 var (
+	expireInterval  int
 	refreshInterval int
 	maxBearings     int
 	paddedTimestamp bool
@@ -38,6 +40,7 @@ var (
 
 func main() {
 	flag.IntVar(&refreshInterval, "refresh", 5, "Refresh interval in seconds")
+	flag.IntVar(&expireInterval, "expire", 2000, "Bearing expire interval in milliseconds")
 	flag.IntVar(&maxBearings, "bearings", 20, "Max bearings to cache")
 	flag.BoolVar(&paddedTimestamp, "paddedTimestamp", false, "Pad timestamps to 15 digits")
 	flag.Parse()
@@ -81,8 +84,9 @@ func readInput() {
 			bearings = bearings[:maxBearings-1]
 		}
 		bearings = append([]Bearing{{
-			Degree: degree / 10.0,
-			Time:   time.UnixMilli(timestamp).Format("15:04:05.000"),
+			Degree:    degree / 10.0,
+			Time:      time.UnixMilli(timestamp).Format("15:04:05.000"),
+			Timestamp: time.UnixMilli(timestamp),
 		}}, bearings...)
 		mu.Unlock()
 	}
@@ -105,11 +109,16 @@ func serveCompass(w http.ResponseWriter, r *http.Request) {
     </style>
 </head>
 <body>
-    <h1>Radial Bearing Display</h1>
+    <h1>Direction Finder Compass</h1>
     <svg width="400" height="400" viewBox="-200 -200 400 400">
         <circle cx="0" cy="0" r="190" fill="none" stroke="#ccc" stroke-width="1"/>
+		{{$expiry := .Expiry}}
         {{range .Bearings}}
-        <circle cx="{{.X}}" cy="{{.Y}}" r="5" fill="{{.Color}}"/>
+			{{ if gt .MsecAgo $expiry }}
+				<circle cx="{{.X}}" cy="{{.Y}}" r="5" fill="none" stroke="black" stroke-width="1"/>
+		    {{ else }}
+				<circle cx="{{.X}}" cy="{{.Y}}" r="5" fill="{{.Color}}"/>
+			{{ end }}
         {{end}}
         <line x1="0" y1="-200" x2="0" y2="-180" stroke="black"/>
         <text x="0" y="-160" text-anchor="middle">N</text>
@@ -130,26 +139,30 @@ func serveCompass(w http.ResponseWriter, r *http.Request) {
 
 	data := struct {
 		Bearings []struct {
-			Degree float64
-			Time   string
-			X      float64
-			Y      float64
-			Color  string
-			Index  int
+			Degree  float64
+			Time    string
+			MsecAgo int64
+			X       float64
+			Y       float64
+			Color   string
+			Index   int
 		}
-		Refresh int
+		Refresh int // Refresh interval in seconds
+		Expiry  int // Expiry interval in milliseconds
 	}{
 		Refresh: refreshInterval,
+		Expiry:  expireInterval,
 	}
 
 	if len(bearings) > 0 {
 		data.Bearings = make([]struct {
-			Degree float64
-			Time   string
-			X      float64
-			Y      float64
-			Color  string
-			Index  int
+			Degree  float64
+			Time    string
+			MsecAgo int64
+			X       float64
+			Y       float64
+			Color   string
+			Index   int
 		}, len(bearings))
 
 		for i, b := range bearings {
@@ -158,24 +171,29 @@ func serveCompass(w http.ResponseWriter, r *http.Request) {
 			radius := 190 * float64(maxBearings-i-1) / float64(maxBearings-1)
 
 			data.Bearings[i] = struct {
-				Degree float64
-				Time   string
-				X      float64
-				Y      float64
-				Color  string
-				Index  int
+				Degree  float64
+				Time    string
+				MsecAgo int64
+				X       float64
+				Y       float64
+				Color   string
+				Index   int
 			}{
-				Degree: b.Degree,
-				Time:   b.Time,
-				X:      radius * math.Sin(rad),
-				Y:      -radius * math.Cos(rad),
-				Color:  fmt.Sprintf("hsl(%d, 100%%, 50%%)", (len(bearings)-i-1)*30),
-				Index:  i,
+				Degree:  b.Degree,
+				Time:    b.Time,
+				MsecAgo: time.Since(b.Timestamp).Milliseconds(),
+				X:       radius * math.Sin(rad),
+				Y:       -radius * math.Cos(rad),
+				Color:   fmt.Sprintf("hsl(%d, 100%%, 50%%)", (len(bearings)-i-1)*30),
+				Index:   i,
 			}
 		}
 
 	}
 
 	t := template.Must(template.New("compass").Parse(tmpl))
-	_ = t.Execute(w, data)
+	err := t.Execute(w, data)
+	if err != nil {
+		panic(err)
+	}
 }
