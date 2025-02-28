@@ -36,7 +36,7 @@ Usage of ./server:
   -paddedTimestamp
     	Pad timestamps to 15 digits
   -refresh int
-    	Refresh interval in seconds (default 5)
+    	Refresh interval in milliseconds (default 200)
 ```
 
 ## Generating fake input data
@@ -52,7 +52,7 @@ Usage of ./server:
 ## Example run
 
 ```bash
-tail -F bearings | ./server -bearings=30 -refresh=1 -expire=1500
+tail -F bearings | ./server -bearings=30 -refresh=100 -expire=1500
 ```
 
 ## Complete list of OS and ARCH
