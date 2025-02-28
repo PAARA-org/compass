@@ -112,6 +112,24 @@ func serveCompass(w http.ResponseWriter, r *http.Request) {
     <h1>Direction Finder Compass</h1>
     <svg width="400" height="400" viewBox="-200 -200 400 400">
         <circle cx="0" cy="0" r="190" fill="none" stroke="#ccc" stroke-width="1"/>
+
+		<!-- Degree ticks and labels -->
+		{{range $i := seq 0 23}}
+			{{$angle := mul (toFloat64 $i) 15}}
+			{{$radians := div (mul (sub 90 $angle) 3.14159265) 180}}
+			{{$x1 := mul (cos $radians) 190}}
+			{{$y1 := mul (sin $radians) -190}}
+			{{$x2 := mul (cos $radians) 180}}
+			{{$y2 := mul (sin $radians) -180}}
+			<line x1="{{$x1}}" y1="{{$y1}}" x2="{{$x2}}" y2="{{$y2}}" stroke="black" stroke-width="0.5"/>
+
+			{{if eq (mod $i 6) 0}}
+				{{$labelX := mul (cos $radians) 165}}
+				{{$labelY := mul (sin $radians) -165}}
+				<text x="{{$labelX}}" y="{{$labelY}}" text-anchor="middle" dominant-baseline="middle" font-size="12">{{$angle}}°</text>
+			{{end}}
+		{{end}}
+
 		{{$expiry := .Expiry}}
         {{range .Bearings}}
 			{{ if gt .MsecAgo $expiry }}
@@ -120,8 +138,6 @@ func serveCompass(w http.ResponseWriter, r *http.Request) {
 				<circle cx="{{.X}}" cy="{{.Y}}" r="5" fill="{{.Color}}"/>
 			{{ end }}
         {{end}}
-        <line x1="0" y1="-200" x2="0" y2="-180" stroke="black"/>
-        <text x="0" y="-160" text-anchor="middle">N</text>
     </svg>
 
     <h2>Recent Bearings</h2>
@@ -191,7 +207,37 @@ func serveCompass(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	t := template.Must(template.New("compass").Parse(tmpl))
+	funcMap := template.FuncMap{
+		"seq": func(start, end int) []int {
+			var result []int
+			for i := start; i <= end; i++ {
+				result = append(result, i)
+			}
+			return result
+		},
+		"mul": func(a, b float64) float64 {
+			return a * b
+		},
+		"div": func(a, b float64) float64 {
+			return a / b
+		},
+		"sub": func(a, b float64) float64 {
+			return a - b
+		},
+		"cos": math.Cos,
+		"sin": math.Sin,
+		"mod": func(a, b int) int {
+			return a % b
+		},
+		"toFloat64": func(i int) float64 {
+			return float64(i)
+		},
+		"toInt": func(i float64) int {
+			return int(i)
+		},
+	}
+
+	t := template.Must(template.New("compass").Funcs(funcMap).Parse(tmpl))
 	err := t.Execute(w, data)
 	if err != nil {
 		panic(err)
