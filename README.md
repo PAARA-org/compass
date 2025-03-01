@@ -7,28 +7,28 @@ In its current implementation, it reads 23 (or 25 if padding is used) character 
 ## Building
 
 ```bash
-go build server.go
+go build
 ```
 
 Alternatively, you can set the **OS** and **ARCH** when compiling the code. 
 - Build for Raspberry PI (ARM) Running 32 bit Linux
 
   ```bash
-  GOOS=linux GOARCH=arm go build server.go
+  GOOS=linux GOARCH=arm go build
   ```
 
 - Build for RaspBerry PI (ARM) running 64 bit Linux
 
   ```bash
-  GOOS=linux GOARCH=arm64 go build server.go
+  GOOS=linux GOARCH=arm64 go build
   ```
 
 ## Usage
 
 ```bash
-% ./server --helpshort
+% ./compass --helpshort
 flag provided but not defined: -helpshort
-Usage of ./server:
+Usage of ./compass:
   -bearings int
     	Max bearings to cache (default 20)
   -expire int
@@ -52,7 +52,7 @@ Usage of ./server:
 ## Example run
 
 ```bash
-tail -F bearings | ./server -bearings=30 -refresh=100 -expire=1500
+tail -F bearings | ./compass -bearings=30 -refresh=100 -expire=1500
 ```
 
 ## Complete list of OS and ARCH
