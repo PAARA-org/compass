@@ -43,7 +43,7 @@ setInterval(updateContent, {{.Refresh}});
 
 const svgTemplate = `
 		<svg width="400" height="400" viewBox="-200 -200 400 400">
-			<circle cx="0" cy="0" r="190" fill="none" stroke="#ccc" stroke-width="1"/>
+			<circle cx="0" cy="0" r="190" fill="#F2F2F2" stroke="#ccc" stroke-width="1.5"/>
 
 			<!-- Degree ticks and labels -->
 			{{range $i := seq 0 23}}
@@ -65,9 +65,9 @@ const svgTemplate = `
 			{{$expiry := .Expiry}}
 			{{range .Bearings}}
 				{{ if gt .MsecAgo $expiry }}
-					<circle cx="{{.X}}" cy="{{.Y}}" r="5" fill="none" stroke="grey" stroke-width="0.5"/>
+					<circle cx="{{.X}}" cy="{{.Y}}" r="5" fill="none" stroke="grey" stroke-width="0.7"/>
 				{{ else }}
-					<circle cx="{{.X}}" cy="{{.Y}}" r="5" fill="{{.Color}}" stroke="black" stroke-width="0.1"/>
+					<circle cx="{{.X}}" cy="{{.Y}}" r="5" fill="{{.Color}}" stroke="black" stroke-width="0.08"/>
 				{{ end }}
 			{{end}}
 		</svg>`
