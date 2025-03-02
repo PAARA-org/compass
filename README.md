@@ -26,8 +26,7 @@ Alternatively, you can set the **OS** and **ARCH** when compiling the code.
 ## Usage
 
 ```bash
-% ./compass --helpshort
-flag provided but not defined: -helpshort
+% ./compass --help
 Usage of ./compass:
   -bearings int
     	Max bearings to cache (default 20)
@@ -37,6 +36,8 @@ Usage of ./compass:
     	Pad timestamps to 15 digits
   -refresh int
     	Refresh interval in milliseconds (default 200)
+  -rows int
+      Max table rows to display (default 5)
 ```
 
 ## Generating fake input data
