@@ -28,7 +28,7 @@ function updateContent() {
 setInterval(updateContent, {{.Refresh}});
 </script>
 <head>
-    <title>Radial Compass</title>
+    <title>Radio Direction Finder</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
         svg { margin: 20px auto; display: block; }
@@ -37,7 +37,7 @@ setInterval(updateContent, {{.Refresh}});
     </style>
 </head>
 <body>
-    <h1>Direction Finder Compass</h1>
+    <h1>Radio Direction Finder</h1>
 	<div id="svgContainer">
 `
 
@@ -65,9 +65,9 @@ const svgTemplate = `
 			{{$expiry := .Expiry}}
 			{{range .Bearings}}
 				{{ if gt .MsecAgo $expiry }}
-					<circle cx="{{.X}}" cy="{{.Y}}" r="5" fill="none" stroke="black" stroke-width="1"/>
+					<circle cx="{{.X}}" cy="{{.Y}}" r="5" fill="none" stroke="grey" stroke-width="0.5"/>
 				{{ else }}
-					<circle cx="{{.X}}" cy="{{.Y}}" r="5" fill="{{.Color}}"/>
+					<circle cx="{{.X}}" cy="{{.Y}}" r="5" fill="{{.Color}}" stroke="black" stroke-width="0.1"/>
 				{{ end }}
 			{{end}}
 		</svg>`
@@ -80,12 +80,18 @@ const midTemplate = `
 
 const tableTemplate = `
 		<table>
-			<tr><th>Degree</th><th>Time</th></tr>
-			{{range .Bearings}}
-			<tr>
-				<td>{{printf "%.1f" .Degree}}°</td>
-				<td>{{.Time}}</td>
-			</tr>
+			<tr><th>Degree</th><th>Magnitude</th><th>Time</th></tr>
+			{{$maxrows := .MaxRows}}
+			{{range $index, $element := .Bearings}}
+				{{if lt $index $maxrows}}
+					<tr>
+						<td>{{printf "%.1f" .Degree}}°</td>
+						<td>{{printf "%d" .Magnitude}}</td>
+						<td>{{.Time}}</td>
+					</tr>
+				{{else}}
+					{{break}}
+				{{end}}
 			{{end}}
 		</table>`
 

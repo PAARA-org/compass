@@ -10,23 +10,26 @@ package main
 import "time"
 
 type Bearing struct {
-	Degree    float64
-	Time      string
-	Timestamp time.Time
+	Degree    float64   // Degrees with one decimal
+	Time      string    // Time as string
+	Timestamp time.Time // Time as timestamp
+	Magnitude int       // angle vector average magnitude
 }
 
 type BearingForTemplate struct {
-	Degree  float64
-	Time    string
-	MsecAgo int64
-	X       float64
-	Y       float64
-	Color   string
-	Index   int
+	Degree    float64
+	Time      string
+	Magnitude int
+	MsecAgo   int64
+	X         float64
+	Y         float64
+	Color     string
+	Index     int
 }
 
 type BT struct {
 	Bearings []BearingForTemplate
 	Refresh  int // Refresh interval in seconds
 	Expiry   int // Expiry interval in milliseconds
+	MaxRows  int // Max table rows to display
 }

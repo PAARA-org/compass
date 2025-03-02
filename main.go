@@ -24,6 +24,7 @@ var (
 	expireInterval  int
 	refreshInterval int
 	maxBearings     int
+	maxTableRows    int
 	paddedTimestamp bool
 	re              *regexp.Regexp
 	bearings        []Bearing
@@ -34,6 +35,7 @@ func main() {
 	flag.IntVar(&refreshInterval, "refresh", 200, "Refresh interval in milliseconds")
 	flag.IntVar(&expireInterval, "expire", 2000, "Bearing expire interval in milliseconds")
 	flag.IntVar(&maxBearings, "bearings", 20, "Max bearings to cache")
+	flag.IntVar(&maxTableRows, "rows", 5, "Max table rows to display")
 	flag.BoolVar(&paddedTimestamp, "paddedTimestamp", false, "Pad timestamps to 15 digits")
 	flag.Parse()
 
@@ -70,10 +72,16 @@ func readInput() {
 			continue
 		}
 
-		degree, err1 := strconv.ParseFloat(matches[1], 64)
-		timestamp, err2 := strconv.ParseInt(matches[4], 10, 64)
-
-		if err1 != nil || err2 != nil {
+		degree, err := strconv.ParseFloat(matches[1], 64)
+		if err != nil {
+			continue
+		}
+		magnitude, err := strconv.ParseInt(matches[2], 10, 64)
+		if err != nil {
+			continue
+		}
+		timestamp, err := strconv.ParseInt(matches[4], 10, 64)
+		if err != nil {
 			continue
 		}
 
@@ -85,6 +93,7 @@ func readInput() {
 			Degree:    degree / 10.0,
 			Time:      time.UnixMilli(timestamp).Format("15:04:05.000"),
 			Timestamp: time.UnixMilli(timestamp),
+			Magnitude: int(magnitude),
 		}}, bearings...)
 		mu.Unlock()
 	}

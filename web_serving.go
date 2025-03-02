@@ -9,13 +9,13 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"math"
 	"net/http"
 	"text/template"
 	"time"
 )
 
+// This function extends the basic GO templates by adding mathematical functions
 var funcMap = template.FuncMap{
 	"seq": func(start, end int) []int {
 		var result []int
@@ -55,6 +55,7 @@ func serveCompass(w http.ResponseWriter, r *http.Request) {
 	data := &BT{
 		Refresh: refreshInterval,
 		Expiry:  expireInterval,
+		MaxRows: maxTableRows,
 	}
 
 	if len(bearings) > 0 {
@@ -66,13 +67,14 @@ func serveCompass(w http.ResponseWriter, r *http.Request) {
 			radius := 190 * float64(maxBearings-i-1) / float64(maxBearings-1)
 
 			data.Bearings[i] = BearingForTemplate{
-				Degree:  b.Degree,
-				Time:    b.Time,
-				MsecAgo: time.Since(b.Timestamp).Milliseconds(),
-				X:       radius * math.Sin(rad),
-				Y:       -radius * math.Cos(rad),
-				Color:   fmt.Sprintf("hsl(%d, 100%%, 50%%)", (len(bearings)-i-1)*30),
-				Index:   i,
+				Degree:    b.Degree,
+				Magnitude: b.Magnitude,
+				Time:      b.Time,
+				MsecAgo:   time.Since(b.Timestamp).Milliseconds(),
+				X:         radius * math.Sin(rad),
+				Y:         -radius * math.Cos(rad),
+				Color:     magnitudeToColor(b.Magnitude),
+				Index:     i,
 			}
 		}
 
@@ -94,6 +96,7 @@ func generateSVGAndTableHTML() string {
 	data := &BT{
 		Refresh: refreshInterval,
 		Expiry:  expireInterval,
+		MaxRows: maxTableRows,
 	}
 
 	if len(bearings) > 0 {
@@ -105,13 +108,14 @@ func generateSVGAndTableHTML() string {
 			radius := 190 * float64(maxBearings-i-1) / float64(maxBearings-1)
 
 			data.Bearings[i] = BearingForTemplate{
-				Degree:  b.Degree,
-				Time:    b.Time,
-				MsecAgo: time.Since(b.Timestamp).Milliseconds(),
-				X:       radius * math.Sin(rad),
-				Y:       -radius * math.Cos(rad),
-				Color:   fmt.Sprintf("hsl(%d, 100%%, 50%%)", (len(bearings)-i-1)*30),
-				Index:   i,
+				Degree:    b.Degree,
+				Magnitude: b.Magnitude,
+				Time:      b.Time,
+				MsecAgo:   time.Since(b.Timestamp).Milliseconds(),
+				X:         radius * math.Sin(rad),
+				Y:         -radius * math.Cos(rad),
+				Color:     magnitudeToColor(b.Magnitude),
+				Index:     i,
 			}
 		}
 
