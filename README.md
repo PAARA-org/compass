@@ -60,9 +60,12 @@ tail -F bearings | ./compass -bearings=30 -refresh=100 -expire=1500
 
 ## Sample UI
 
-This image shows the display for fake data input with 70.0° and ~770 magnitude.
+### Fake data input with 70.0° and ~770 magnitude.
 
 ![screenshot](docs/screenshot.v1.0.8.png)
+
+### Dark Mode
+
 ![screenshot-dark-mode](docs/screenshot.v1.0.9-darkmode.png)
 
 ## Complete list of OS and ARCH
