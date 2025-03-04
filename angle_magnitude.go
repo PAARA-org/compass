@@ -7,7 +7,16 @@ LICENSE file in the root directory of this source tree.
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
+
+// This contains the color pallette definition
+type colorStop struct {
+	position float64 // Normalized position (0.0 to 1.0)
+	r, g, b  int     // RGB values
+}
 
 // This function takes the angle vector average magnitude
 // and converts the values to colors in a gradient from white to blue
@@ -20,41 +29,48 @@ func magnitudeToColor(value int) string {
 		value = 999
 	}
 
-	t := float64(999-value) / 999.0
-	type colorStop struct {
-		t       float64
-		r, g, b uint8
-	}
-
 	stops := []colorStop{
-		{0.0, 255, 255, 255}, // White (max strength)
-		{0.15, 255, 0, 0},    // Red
-		{0.35, 255, 255, 0},  // Yellow
-		{0.55, 0, 255, 0},    // Green
-		{0.75, 0, 255, 255},  // Cyan
-		{1.0, 0, 0, 255},     // Blue (min strength)
+		{0.0, 0, 0, 139},      // Dark Blue (min strength)
+		{0.16, 173, 216, 230}, // Light Blue
+		{0.32, 255, 255, 255}, // White
+		{0.48, 255, 255, 0},   // Yellow
+		{0.64, 155, 165, 0},   // Orange
+		{0.84, 255, 0, 0},     // Red
+		{1.0, 139, 69, 19},    // Brown (max strength)
 	}
 
-	var prev, next *colorStop
-	for i := 0; i < len(stops)-1; i++ {
-		if t >= stops[i].t && t <= stops[i+1].t {
-			prev, next = &stops[i], &stops[i+1]
-			break
-		}
-	}
-
-	if prev == nil {
-		if t <= stops[0].t {
-			return fmt.Sprintf("#%02X%02X%02X", stops[0].r, stops[0].g, stops[0].b)
-		}
-		return fmt.Sprintf("#%02X%02X%02X", stops[len(stops)-1].r, stops[len(stops)-1].g, stops[len(stops)-1].b)
-	}
-
-	delta := next.t - prev.t
-	frac := (t - prev.t) / delta
-	r := prev.r + uint8(frac*float64(next.r-prev.r))
-	g := prev.g + uint8(frac*float64(next.g-prev.g))
-	b := prev.b + uint8(frac*float64(next.b-prev.b))
+	r, g, b := getRGB(value, stops)
 
 	return fmt.Sprintf("#%02X%02X%02X", r, g, b)
+}
+
+// Function to get RGB values for a given value between 0 and 999
+func getRGB(value int, stops []colorStop) (int, int, int) {
+	// Normalize the input value to a range of 0.0 to 1.0
+	normalizedValue := float64(value) / 999.0
+
+	// Find the two stops between which the normalized value falls
+	for i := 0; i < len(stops)-1; i++ {
+		start := stops[i]
+		end := stops[i+1]
+
+		if normalizedValue >= start.position && normalizedValue <= end.position {
+			// Calculate the interpolation factor (t)
+			t := (normalizedValue - start.position) / (end.position - start.position)
+
+			// Linearly interpolate each color channel
+			r := int(math.Round(float64(start.r) + t*float64(end.r-start.r)))
+			g := int(math.Round(float64(start.g) + t*float64(end.g-start.g)))
+			b := int(math.Round(float64(start.b) + t*float64(end.b-start.b)))
+
+			return r, g, b
+		}
+	}
+
+	// If value is out of range, return the closest stop's color
+	if normalizedValue < stops[0].position {
+		return stops[0].r, stops[0].g, stops[0].b
+	}
+	last := stops[len(stops)-1]
+	return last.r, last.g, last.b
 }

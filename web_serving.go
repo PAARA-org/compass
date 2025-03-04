@@ -27,11 +27,20 @@ var funcMap = template.FuncMap{
 	"mul": func(a, b float64) float64 {
 		return a * b
 	},
+	"mulInt": func(a, b int) int {
+		return a * b
+	},
 	"div": func(a, b float64) float64 {
+		return a / b
+	},
+	"divInt": func(a, b int) int {
 		return a / b
 	},
 	"sub": func(a, b float64) float64 {
 		return a - b
+	},
+	"add": func(a, b int) int {
+		return a + b
 	},
 	"cos": math.Cos,
 	"sin": math.Sin,
@@ -43,6 +52,9 @@ var funcMap = template.FuncMap{
 	},
 	"toInt": func(i float64) int {
 		return int(i)
+	},
+	"valueToColor": func(i int) string {
+		return magnitudeToColor(i)
 	},
 }
 

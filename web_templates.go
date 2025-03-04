@@ -31,7 +31,7 @@ setInterval(updateContent, {{.Refresh}});
     <title>Radio Direction Finder</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
-        svg { margin: 20px auto; display: block; }
+        svg { margin: 15px auto; display: block; }
         table { margin: auto; border-collapse: collapse; }
         td, th { padding: 8px; border: 1px solid #ddd; }
     </style>
@@ -72,10 +72,24 @@ const svgTemplate = `
 			{{end}}
 		</svg>`
 
+// Here we're printing the legend which needs to start at 75 pixels offset
+// in order to be properly aligned with the compass above which is 400 pixels wide
 const midTemplate = `
 	</div>
+		<svg width="400" height="20" xmlns="http://www.w3.org/2000/svg">
+		{{- range $i := seq 0 1000 }}
+			{{ if eq (mod $i 200) 0 }}
+				<text x="{{ add (divInt $i 4) 70 }}" y="15" text-anchor="middle" dominant-baseline="middle" font-size="12">{{ $i }}</text>
+			{{ end }}
+		{{- end }}
+		</svg>
+		<svg width="400" height="15" xmlns="http://www.w3.org/2000/svg">
+		{{- range $i := seq 0 250 }}
+			<line x1="{{ add $i 75 }}" y1="0" x2="{{ add $i 75 }}" y2="10" stroke="{{ valueToColor (mulInt $i 4) }}" stroke-width="1" />
+		{{- end }}
+		</svg>
 
-	<h2>Recent Bearings</h2>
+	<h4>Recent Bearings</h4>
 	<div id="tableContainer">`
 
 const tableTemplate = `
