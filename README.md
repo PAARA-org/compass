@@ -56,6 +56,12 @@ Usage of ./compass:
 tail -F bearings | ./compass -bearings=30 -refresh=100 -expire=1500
 ```
 
+## Sample UI
+
+This image shows the display for fake data input with 70.0° and ~770 magnitude.
+
+![screenshot](docs/screenshot.v1.0.8.png)
+
 ## Complete list of OS and ARCH
 
 With GO version 1.21.0, the following OS and ARCH combinations are allowed as seen in `go tool dist list`:
