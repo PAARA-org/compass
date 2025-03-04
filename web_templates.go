@@ -70,12 +70,12 @@ const svgTemplate = `
 					<circle cx="{{.X}}" cy="{{.Y}}" r="5" fill="{{.Color}}" stroke="black" stroke-width="0.08"/>
 				{{ end }}
 			{{end}}
-		</svg>`
+		</svg>
+	</div>`
 
 // Here we're printing the legend which needs to start at 75 pixels offset
 // in order to be properly aligned with the compass above which is 400 pixels wide
 const midTemplate = `
-	</div>
 		<svg width="400" height="20" xmlns="http://www.w3.org/2000/svg">
 		{{- range $i := seq 0 1000 }}
 			{{ if eq (mod $i 200) 0 }}
@@ -90,9 +90,10 @@ const midTemplate = `
 		</svg>
 
 	<h4>Recent Bearings</h4>
-	<div id="tableContainer">`
+`
 
 const tableTemplate = `
+	<div id="tableContainer">
 		<table>
 			<tr><th>Degree</th><th>Magnitude</th><th>Time</th></tr>
 			{{$maxrows := .MaxRows}}
