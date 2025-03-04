@@ -65,9 +65,10 @@ func serveCompass(w http.ResponseWriter, r *http.Request) {
 	const tmpl = pageHeader + svgTemplate + midTemplate + tableTemplate + footerTemplate
 
 	data := &BT{
-		Refresh: refreshInterval,
-		Expiry:  expireInterval,
-		MaxRows: maxTableRows,
+		DarkMode: darkMode,
+		Expiry:   expireInterval,
+		Refresh:  refreshInterval,
+		MaxRows:  maxTableRows,
 	}
 
 	if len(bearings) > 0 {
@@ -106,9 +107,10 @@ func generateSVGAndTableHTML() string {
 	const partialTmpl = svgTemplate + tableTemplate
 
 	data := &BT{
-		Refresh: refreshInterval,
-		Expiry:  expireInterval,
-		MaxRows: maxTableRows,
+		DarkMode: darkMode,
+		Expiry:   expireInterval,
+		Refresh:  refreshInterval,
+		MaxRows:  maxTableRows,
 	}
 
 	if len(bearings) > 0 {

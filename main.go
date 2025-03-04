@@ -21,6 +21,7 @@ import (
 )
 
 var (
+	darkMode        bool
 	expireInterval  int
 	refreshInterval int
 	maxBearings     int
@@ -32,11 +33,12 @@ var (
 )
 
 func main() {
-	flag.IntVar(&refreshInterval, "refresh", 200, "Refresh interval in milliseconds")
+	flag.BoolVar(&darkMode, "darkmode", false, "Enable dark mode")
 	flag.IntVar(&expireInterval, "expire", 2000, "Bearing expire interval in milliseconds")
 	flag.IntVar(&maxBearings, "bearings", 20, "Max bearings to cache")
 	flag.IntVar(&maxTableRows, "rows", 5, "Max table rows to display")
 	flag.BoolVar(&paddedTimestamp, "paddedTimestamp", false, "Pad timestamps to 15 digits")
+	flag.IntVar(&refreshInterval, "refresh", 200, "Refresh interval in milliseconds")
 	flag.Parse()
 
 	go readInput()

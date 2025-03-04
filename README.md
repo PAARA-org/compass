@@ -30,6 +30,8 @@ Alternatively, you can set the **OS** and **ARCH** when compiling the code.
 Usage of ./compass:
   -bearings int
     	Max bearings to cache (default 20)
+  -darkmode
+    	Enable dark mode
   -expire int
     	Bearing expire interval in milliseconds (default 2000)
   -paddedTimestamp
@@ -37,7 +39,7 @@ Usage of ./compass:
   -refresh int
     	Refresh interval in milliseconds (default 200)
   -rows int
-      Max table rows to display (default 5)
+    	Max table rows to display (default 5)
 ```
 
 ## Generating fake input data

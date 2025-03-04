@@ -24,7 +24,6 @@ function updateContent() {
             tableContainer.innerHTML = doc.querySelector('table').outerHTML;
         });
 }
-
 setInterval(updateContent, {{.Refresh}});
 </script>
 <head>
@@ -32,18 +31,18 @@ setInterval(updateContent, {{.Refresh}});
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
         svg { margin: 15px auto; display: block; }
-        table { margin: auto; border-collapse: collapse; }
-        td, th { padding: 8px; border: 1px solid #ddd; }
+        table { margin: auto; border-collapse: collapse; {{ if .DarkMode }}border-color: "black"; {{ end }} }
+        td, th { padding: 8px; border: 1px solid {{ if .DarkMode }} #000000; {{ else }} #ddd; {{ end }} }
     </style>
 </head>
-<body>
+<body {{ if .DarkMode }}bgcolor="#414141" {{ end }}>
     <h1>Radio Direction Finder</h1>
 	<div id="svgContainer">
 `
 
 const svgTemplate = `
 		<svg width="400" height="400" viewBox="-200 -200 400 400">
-			<circle cx="0" cy="0" r="190" fill="#F2F2F2" stroke="#ccc" stroke-width="1.5"/>
+			<circle cx="0" cy="0" r="190" {{ if .DarkMode }} fill="#929292"{{ else }} fill="#F2F2F2" {{ end }} stroke={{ if .DarkMode }}#000000{{ else }}"#ccc"{{ end }} stroke-width="1.5"/>
 
 			<!-- Degree ticks and labels -->
 			{{range $i := seq 0 23}}

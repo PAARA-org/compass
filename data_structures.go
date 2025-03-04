@@ -29,7 +29,8 @@ type BearingForTemplate struct {
 
 type BT struct {
 	Bearings []BearingForTemplate
-	Refresh  int // Refresh interval in seconds
-	Expiry   int // Expiry interval in milliseconds
-	MaxRows  int // Max table rows to display
+	DarkMode bool // Controls page rendering in dark mode
+	Expiry   int  // Expiry interval in milliseconds
+	MaxRows  int  // Max table rows to display
+	Refresh  int  // Refresh interval in seconds
 }
