@@ -54,7 +54,7 @@ var funcMap = template.FuncMap{
 		return int(i)
 	},
 	"valueToColor": func(i int) string {
-		return magnitudeToColor(i)
+		return getColor(i, colors, accessibleMode)
 	},
 }
 
@@ -86,7 +86,7 @@ func serveCompass(w http.ResponseWriter, r *http.Request) {
 				MsecAgo:   time.Since(b.Timestamp).Milliseconds(),
 				X:         radius * math.Sin(rad),
 				Y:         -radius * math.Cos(rad),
-				Color:     magnitudeToColor(b.Magnitude),
+				Color:     getColor(b.Magnitude, colors, accessibleMode),
 				Index:     i,
 			}
 		}
@@ -128,7 +128,7 @@ func generateSVGAndTableHTML() string {
 				MsecAgo:   time.Since(b.Timestamp).Milliseconds(),
 				X:         radius * math.Sin(rad),
 				Y:         -radius * math.Cos(rad),
-				Color:     magnitudeToColor(b.Magnitude),
+				Color:     getColor(b.Magnitude, colors, accessibleMode),
 				Index:     i,
 			}
 		}

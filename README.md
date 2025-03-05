@@ -28,8 +28,12 @@ Alternatively, you can set the **OS** and **ARCH** when compiling the code.
 ```bash
 % ./compass --help
 Usage of ./compass:
+  -accessible
+    	Enable accessible color mode
   -bearings int
     	Max bearings to cache (default 20)
+  -colors string
+    	5 colors to use for displaying magnitude, low to high (default "#2c7bb6,#abd9e9,#ffffbf,#fdae61,#d7191c")
   -darkmode
     	Enable dark mode
   -expire int
@@ -57,6 +61,26 @@ Usage of ./compass:
 ```bash
 tail -F bearings | ./compass -bearings=30 -refresh=100 -expire=1500
 ```
+
+## Gradient versus accessibility colors
+
+By default, the bearings are displayed in gradients of color (based on the magnitude):
+* Dark Blue (min)
+* Light Blue
+* White
+* Yellow
+* Orange
+* Red
+* Brown (max)
+
+For accessbility reasons, you can run the server with `-accessible` and it will only display 5 colors, changing at every magnitude increase by 200:
+* #2c7bb6
+* #abd9e9
+* #ffffbf
+* #fdae61
+* #d7191c
+
+You can override the default colors from command line, appending `-colors` with the value being five comma sepparated colors expressed as hex values with leading hashtag (Eg: `-colors="#2c7bb6,#abd9e9,#ffffbf,#fdae61,#d7191c"`)
 
 ## Sample UI
 

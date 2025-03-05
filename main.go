@@ -21,18 +21,23 @@ import (
 )
 
 var (
-	darkMode        bool
-	expireInterval  int
-	refreshInterval int
-	maxBearings     int
-	maxTableRows    int
-	paddedTimestamp bool
-	re              *regexp.Regexp
-	bearings        []Bearing
-	mu              sync.Mutex
+	accessibleMode   bool     // When true, it turns on accessible color mode
+	accessibleColors string   // Comma separated values of accessible colors
+	colors           []string // Slice of colors to use for accessibility
+	darkMode         bool     // Turns on dark mode
+	expireInterval   int      // How quickly the bearing dots expire
+	refreshInterval  int      // How quickly the browser should pull fresh data
+	maxBearings      int      // How many bearing dots should we cache
+	maxTableRows     int      // How many recent bearings to be displayed in the table
+	paddedTimestamp  bool     // When true, we use 15 character timestamp
+	re               *regexp.Regexp
+	bearings         []Bearing
+	mu               sync.Mutex
 )
 
 func main() {
+	flag.BoolVar(&accessibleMode, "accessible", false, "Enable accessible color mode")
+	flag.StringVar(&accessibleColors, "colors", "#2c7bb6,#abd9e9,#ffffbf,#fdae61,#d7191c", "5 colors to use for displaying magnitude, low to high")
 	flag.BoolVar(&darkMode, "darkmode", false, "Enable dark mode")
 	flag.IntVar(&expireInterval, "expire", 2000, "Bearing expire interval in milliseconds")
 	flag.IntVar(&maxBearings, "bearings", 20, "Max bearings to cache")
@@ -43,6 +48,13 @@ func main() {
 
 	go readInput()
 
+	var err error
+	colors, err = parseColors(accessibleColors)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	http.HandleFunc("/", serveCompass)
 	http.HandleFunc("/update", func(w http.ResponseWriter, r *http.Request) {
 		// Generate only the SVG and table HTML
@@ -52,6 +64,22 @@ func main() {
 	})
 	fmt.Println("Server running on http://localhost:8080")
 	_ = http.ListenAndServe(":8080", nil)
+}
+
+func parseColors(csv string) (colors []string, err error) {
+	hexPattern := regexp.MustCompile("^#[0-9A-Fa-f]{6}$")
+	colors = strings.Split(csv, ",")
+	if len(colors) < 5 {
+		err = fmt.Errorf("Could not detect 5 comma separated colors.")
+		return
+	}
+
+	for i, color := range colors {
+		if !strings.HasPrefix(color, "#") || !hexPattern.MatchString(color) {
+			err = fmt.Errorf("Color at index %d does not have the expected format (eg: #aa00b7)", i)
+		}
+	}
+	return
 }
 
 func readInput() {

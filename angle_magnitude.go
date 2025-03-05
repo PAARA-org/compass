@@ -18,11 +18,37 @@ type colorStop struct {
 	r, g, b  int     // RGB values
 }
 
+// This function picks the right color depending on whether or not accessible
+// colors are being used
+func getColor(value int, colors []string, a11y bool) (color string) {
+	if a11y {
+		return magnitudeToColor(value, colors)
+	} else {
+		return magnitudeToColorGradient(value)
+	}
+}
+
+// This function returns the string representation of the hexadecimal
+// value of the color for each of the maginitude values
+func magnitudeToColor(value int, colors []string) string {
+	if value < 200 {
+		return colors[0]
+	} else if value < 400 {
+		return colors[1]
+	} else if value < 600 {
+		return colors[2]
+	} else if value < 800 {
+		return colors[3]
+	} else {
+		return colors[4]
+	}
+}
+
 // This function takes the angle vector average magnitude
 // and converts the values to colors in a gradient from white to blue
 // Andy (KR6DD) suggested this color schema as seen in waterfalls
 // of SDR# and Spectran.exe (those run only on PC's).
-func magnitudeToColor(value int) string {
+func magnitudeToColorGradient(value int) string {
 	if value < 0 {
 		value = 0
 	} else if value > 999 {
