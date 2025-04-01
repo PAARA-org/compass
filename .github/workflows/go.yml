@@ -102,7 +102,9 @@ jobs:
           echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_ENV
           echo "GOOS=$GOOS" >> $GITHUB_ENV
           echo "GOARCH=$GOARCH" >> $GITHUB_ENV
-          [[ -n "$GOARM" ]] && echo "GOARM=$GOARM" >> $GITHUB_ENV
+          if [[ -n "$GOARM" ]]; then
+            echo "GOARM=$GOARM" >> $GITHUB_ENV
+          fi
       - name: Build
         run: |
           go build -o "$BINARY_NAME" -v
