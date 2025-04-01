@@ -58,8 +58,10 @@ jobs:
           #- 'js/wasm'
           #- 'linux/386'
           #- 'linux/amd64'
-          - 'linux/arm'
-          - 'linux/arm64'
+          # ARMv6 (32-bit) for Raspberry Pi Zero/W/1
+          - 'linux/arm/6'  # Explicit ARMv6
+          - 'linux/arm/7'  # ARMv7 (common for Pi 2-4)
+          - 'linux/arm64'  # ARMv8 (64-bit for Pi 3B+/4)
           #- 'linux/mips'
           #- 'linux/mips64'
           #- 'linux/mips64le'
@@ -95,15 +97,17 @@ jobs:
       - name: Get OS and arch info
         run: |
           GOOSARCH=${{matrix.goosarch}}
-          GOOS=${GOOSARCH%/*}
-          GOARCH=${GOOSARCH#*/}
-          BINARY_NAME=compass-$GOOS-$GOARCH
+          IFS='/' read -r GOOS GOARCH GOARM <<< "$GOOSARCH"
+          BINARY_NAME=compass-$GOOS-$GOARCH${GOARM:+-$GOARM}
           echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_ENV
           echo "GOOS=$GOOS" >> $GITHUB_ENV
           echo "GOARCH=$GOARCH" >> $GITHUB_ENV
+          [[ -n "$GOARM" ]] && echo "GOARM=$GOARM" >> $GITHUB_ENV
       - name: Build
         run: |
           go build -o "$BINARY_NAME" -v
+        env:
+          GOARM: ${{ env.GOARM }}
       - name: Release Notes
         run:
           git log $(git describe HEAD~ --tags --abbrev=0)..HEAD --pretty='format:* %h %s%n  * %an <%ae>' --no-merges >> ".github/RELEASE-TEMPLATE.md"
